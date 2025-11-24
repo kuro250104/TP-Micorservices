@@ -4,17 +4,41 @@ services:
   user-service:
     build:
       context: .
-    ports:
-      - "5000:5000"
+    # ports:
+    #   - "5000:5000"
     restart: unless-stopped
     # depends_on:
     #   - user-db
     networks:
       - demo-network
 
-  # user-db:
-  #   image: postgres:15-alpine
+  users-db:
+    image: postgres
+    container_name: users-db
+    environment:
+      POSTGRES_USER: users
+      POSTGRES_PASSWORD: users
+      POSTGRES_DB: users
+      PGDATA: /var/lib/postgresql/data
+    networks:
+      - demo-network
+    volumes:
+      - users-db-data:/var/lib/postgresql/data
 
+  user-pgadmin:
+    image: dpage/pgadmin4
+    container_name: user-pgadmin
+    ports:
+      - "5888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user@user.user
+      PGADMIN_DEFAULT_PASSWORD: user
+    networks:
+      - demo-network
+
+
+volumes:
+      users-db-data:
 networks:
   demo-network:
     driver: bridge
