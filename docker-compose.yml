@@ -1,0 +1,44 @@
+version: "3.9"
+
+services:
+  gateway:
+    build: ./api-gateway
+    container_name: gateway
+    ports:
+      - "5555:5555"
+    environment:
+      - USE_DOCKER_HOSTS=true
+    depends_on:
+      - users
+      - restaurants
+      - orders
+    networks:
+      - backend
+
+  users:
+    build: ./users
+    container_name: users
+    ports:
+      - "5000:5000"
+    networks:
+      - backend
+
+  restaurants:
+    build: ./restaurant
+    container_name: restaurants
+    ports:
+      - "5001:5001"
+    networks:
+      - backend
+
+  orders:
+    build: ./order-services
+    container_name: orders
+    ports:
+      - "5002:5002"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
