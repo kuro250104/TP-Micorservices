@@ -1,20 +1,21 @@
 import express from 'express';
+import cors from 'cors';
 import { setupLogging } from './logging.js';
-import cors from "cors";
+import userRoutes from './routes.js';
+
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
-app.use(express.json());
 app.use(cors());
-
+app.use(express.json());
 setupLogging(app);
 
+app.use('/', userRoutes);
 
-app.get('/', (req, res) => {
-    res.send('/ of user-service');
+app.get('/health', (req, res) => {
+    res.json({ status: 'ok', service: 'users' });
 });
 
 app.listen(PORT, () => {
-    console.log(`Public API server is running on port ${PORT}`);
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`[USERS-SERVICE] Running on port ${PORT}`);
 });
