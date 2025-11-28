@@ -1,36 +1,31 @@
-import { Router } from 'express';
+import { Router } from "express";
+import Order from "../models/Order.js";
 
 const router = Router();
 
-const orders = [];
-let nextId = 1;
-
-router.get('/', (req, res) => {
-    console.log('[ORDER-SERVICE] GET /orders');
+// GET ALL ORDERS
+router.get("/", async (req, res) => {
+    const orders = await Order.find();
     res.json(orders);
 });
 
-router.get('/:id', (req, res) => {
-    console.log('[ORDER-SERVICE] GET /orders/:id');
-    const id = Number(req.params.id);
-    const order = orders.find(o => o.id === id);
+// GET ONE ORDER
+router.get("/:id", async (req, res) => {
+    const order = await Order.findById(req.params.id);
 
-    if (!order) {
-        return res.status(404).json({ error: 'Order not found' });
-    }
+    if (!order) return res.status(404).json({ error: "Order not found" });
 
-    return res.json(order);
+    res.json(order);
 });
 
-router.post('/', (req, res) => {
-    console.log('[ORDER-SERVICE] POST /orders', req.body);
-
+// CREATE ORDER
+router.post("/", async (req, res) => {
     const { userId, restaurantId, items } = req.body;
 
-    if (!userId || !restaurantId || !Array.isArray(items) || items.length === 0) {
-        return res.status(400).json({
-            error: 'userId, restaurantId and items[] are required',
-        });
+    if (!userId || !restaurantId || !items?.length) {
+        return res
+            .status(400)
+            .json({ error: "userId, restaurantId and items[] are required" });
     }
 
     const totalPrice = items.reduce(
@@ -38,40 +33,41 @@ router.post('/', (req, res) => {
         0
     );
 
-    const newOrder = {
-        id: nextId++,
+    const order = await Order.create({
         userId,
         restaurantId,
         items,
         totalPrice,
-        status: 'pending',
-        createdAt: new Date().toISOString(),
-    };
+    });
 
-    orders.push(newOrder);
-    return res.status(201).json(newOrder);
+    res.status(201).json(order);
 });
 
-router.patch('/:id/status', (req, res) => {
-    console.log('[ORDER-SERVICE] PATCH /orders/:id/status', req.body);
-
-    const id = Number(req.params.id);
+// UPDATE STATUS
+router.patch("/:id/status", async (req, res) => {
     const { status } = req.body;
 
-    const validStatuses = ["pending", "accepted", "delivering", "delivered", "canceled"];
+    const validStatuses = [
+        "pending",
+        "accepted",
+        "delivering",
+        "delivered",
+        "canceled",
+    ];
 
     if (!validStatuses.includes(status)) {
-        return res.status(400).json({ error: `Invalid status.` });
+        return res.status(400).json({ error: "Invalid status" });
     }
 
-    const order = orders.find(o => o.id === id);
-    if (!order) {
-        return res.status(404).json({ error: 'Order not found' });
-    }
+    const order = await Order.findByIdAndUpdate(
+        req.params.id,
+        { status },
+        { new: true }
+    );
 
-    order.status = status;
+    if (!order) return res.status(404).json({ error: "Order not found" });
 
-    return res.json(order);
+    res.json(order);
 });
 
 export default router;
