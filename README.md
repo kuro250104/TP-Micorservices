@@ -1,9 +1,11 @@
+# FoodExpress
 
-FoodExpress est une plateforme moderne de commande et livraison de repas, inspirée d’Uber Eats.  
+FoodExpress est une plateforme moderne de commande et livraison de repas, inspirée d'Uber Eats.  
 Elle permet aux utilisateurs de parcourir des restaurants, consulter les menus, passer des commandes et suivre leurs livraisons en temps réel.
 
- **Objectif du projet** 
-Au-delà d’être une plateforme de livraison comme les autres, le but de FoodExpress est de proposer un modèle **plus juste et plus éthique**, en **mieux rémunérant les livreurs** :
+## Objectif du projet
+
+Au-delà d'être une plateforme de livraison comme les autres, le but de FoodExpress est de proposer un modèle **plus juste et plus éthique**, en **mieux rémunérant les livreurs** :
 
 - Commission plus élevée  
 - Minimum garanti par course  
@@ -12,7 +14,7 @@ Au-delà d’être une plateforme de livraison comme les autres, le but de FoodE
 
 ---
 
-#  Technologies utilisées
+## Technologies utilisées
 
 - **Frontend :** React + Vite + TailwindCSS  
 - **Backend :** Node.js + Express 
@@ -22,17 +24,27 @@ Au-delà d’être une plateforme de livraison comme les autres, le but de FoodE
 
 ---
 
-#  Architecture du projet
-
-FoodExpress/ │ ├── api-gateway/ → Point d’entrée unique (reverse proxy) ├── users/ → Microservice utilisateurs ├── restaurant/ → Microservice restaurants/menus ├── order-services/ → Microservice commandes/livraisons │ ├── middlewares/ → Middlewares mutualisés │ ├── front/ → Application React (client web) │ ├── docker-compose.yml → Lancement multi-containers └── README.md → Documentation
+## Architecture du projet
+```
+FoodExpress/
+│
+├── api-gateway/          → Point d'entrée unique (reverse proxy)
+├── users/                → Microservice utilisateurs
+├── restaurant/           → Microservice restaurants/menus
+├── order-services/       → Microservice commandes/livraisons
+├── middlewares/          → Middlewares mutualisés
+├── front/                → Application React (client web)
+├── docker-compose.yml    → Lancement multi-containers
+└── README.md             → Documentation
+```
 
 ---
 
-#  Base de données – MongoDB (NoSQL)
+## Base de données – MongoDB (NoSQL)
 
-Chaque microservice utilise **sa propre base** (pattern “Database per Service”).
+Chaque microservice utilise **sa propre base** (pattern "Database per Service").
 
- users-db :
+### users-db
 ```json
 {
   "_id": "ObjectId",
@@ -47,8 +59,10 @@ Chaque microservice utilise **sa propre base** (pattern “Database per Service�
     "available": "boolean"
   }
 }
- restaurant-dbv :
+```
 
+### restaurant-db
+```json
 {
   "_id": "ObjectId",
   "ownerId": "ObjectId",
@@ -68,8 +82,10 @@ Chaque microservice utilise **sa propre base** (pattern “Database per Service�
     }
   ]
 }
- orders-db :
+```
 
+### orders-db
+```json
 {
   "_id": "ObjectId",
   "customerId": "ObjectId",
@@ -90,33 +106,47 @@ Chaque microservice utilise **sa propre base** (pattern “Database per Service�
   "status": "pending | accepted | delivering | delivered",
   "createdAt": "date"
 }
+```
 
- API Gateway
+---
+
+## API Gateway
+
 Le Gateway unifie les routes de tous les microservices.
-Exemple :
 
+**Exemple :**
+```javascript
 app.use("/users", proxy("http://users:3001"));
 app.use("/restaurants", proxy("http://restaurant:3002"));
 app.use("/orders", proxy("http://orders:3003"));
+```
 
- Backend – Microservices Express
-🔹 Microservice Users
-Authentification
-Profils clients / restaurants / livreurs
-Suivi des gains des livreurs
-Disponibilité en temps réel
-🔹 Microservice Restaurant
-CRUD restaurants
-Gestion des menus
-🔹 Microservice Order Services
-Création commandes
-Affectation automatique des livreurs
-Suivi livraison
-Calcul des gains livreurs
+---
 
- Frontend – React + Vite + Tailwind
-Structure :
+## Backend – Microservices Express
 
+### Microservice Users
+- Authentification
+- Profils clients / restaurants / livreurs
+- Suivi des gains des livreurs
+- Disponibilité en temps réel
+
+### Microservice Restaurant
+- CRUD restaurants
+- Gestion des menus
+
+### Microservice Order Services
+- Création commandes
+- Affectation automatique des livreurs
+- Suivi livraison
+- Calcul des gains livreurs
+
+---
+
+## Frontend – React + Vite + Tailwind
+
+### Structure :
+```
 front/
 │
 ├── src/
@@ -127,64 +157,89 @@ front/
 │
 ├── vite.config.js
 └── tailwind.config.js
-Exemple d'appel API :
+```
 
+### Exemple d'appel API :
+```javascript
 fetch("http://localhost:3000/restaurants")
   .then(res => res.json())
   .then(data => setRestaurants(data));
-
- Lancement du projet: 
-1) Cloner le projet
-
-git clone https://github.com/ton-dépôt/FoodExpress.git
-cd FoodExpress
-
-2) Mode Docker (recommandé)
-
-docker-compose up --build
-Services lancés :
-API Gateway
-Users service
-Restaurant service
-Orders service
-MongoDB
-Front React
-
-3) Lancer manuellement les microservices
-Users
-
-cd users
-npm install
-npm start
-Restaurant
-
-cd restaurant
-npm install
-npm start
-Orders
-
-cd order-services
-npm install
-npm start
-
-4) Lancer le frontend
-
-cd front
-npm install
-npm run dev
-Disponible sur : 👉 http://localhost:5173
-
- Un modèle plus juste pour les livreurs
-FoodExpress met les livreurs au centre du système :
-Rémunération plus élevée
-Minimum garanti
-Gains visibles en temps réel
-Process simple et transparent
-
- Conclusion
-Ce README regroupe : ✔ ton ancien texte ✔ l'architecture actuelle ✔ la BD MongoDB ✔ le fonctionnement microservice ✔ la vision éthique du projet
-
-FoodExpress — Manger mieux, Livrer mieux, Payer mieux.
+```
 
 ---
 
+## Lancement du projet
+
+### 1) Cloner le projet
+```bash
+git clone https://github.com/ton-dépôt/FoodExpress.git
+cd FoodExpress
+```
+
+### 2) Mode Docker (recommandé)
+```bash
+docker-compose up --build
+```
+
+**Services lancés :**
+- API Gateway
+- Users service
+- Restaurant service
+- Orders service
+- MongoDB
+- Front React
+
+### 3) Lancer manuellement les microservices
+
+**Users**
+```bash
+cd users
+npm install
+npm start
+```
+
+**Restaurant**
+```bash
+cd restaurant
+npm install
+npm start
+```
+
+**Orders**
+```bash
+cd order-services
+npm install
+npm start
+```
+
+### 4) Lancer le frontend
+```bash
+cd front
+npm install
+npm run dev
+```
+
+**Disponible sur :** http://localhost:5173
+
+---
+
+## Un modèle plus juste pour les livreurs
+
+FoodExpress met les livreurs au centre du système :
+
+- Rémunération plus élevée
+- Minimum garanti
+- Gains visibles en temps réel
+- Process simple et transparent
+
+---
+
+## Conclusion
+
+Ce README regroupe :
+- Architecture microservices complète
+- Base de données MongoDB détaillée
+- Configuration Docker
+- Vision éthique du projet
+
+**FoodExpress — Manger mieux, Livrer mieux, Payer mieux.**
