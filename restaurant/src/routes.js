@@ -2,46 +2,32 @@ import { Router } from 'express';
 
 const router = Router();
 
-const restaurants = [
-    {
-        id: 1,
-        name: "Burger Palace",
-        cuisine: "Burgers",
-        rating: 4.6,
-        city: "Toulouse",
-        menu: [
-            { id: 1, name: "Cheeseburger", price: 9.5 },
-            { id: 2, name: "Double Bacon Burger", price: 12.0 },
-            { id: 3, name: "Fries", price: 3.5 }
-        ]
-    },
-    {
-        id: 2,
-        name: "Sushi Sakura",
-        cuisine: "Japonaise",
-        rating: 4.8,
-        city: "Toulouse",
-        menu: [
-            { id: 1, name: "Sushi mix 12p", price: 14.0 },
-            { id: 2, name: "California saumon avocat", price: 11.5 }
-        ]
-    }
-];
 
-router.get('/', (req, res) => {
-    const list = restaurants.map(({ menu, ...rest }) => rest);
-    res.json(list);
+router.get("/", async (req, res) => {
+    try {
+        const restaurants = await Restaurant.find().lean();
+        res.json(restaurants);
+    } catch (err) {
+        console.error("[RESTAURANT-SERVICE] GET /restaurants error:", err.message);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
 
-router.get('/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const restaurant = restaurants.find(r => r.id === id);
+// GET /restaurants/:id (id numérique, ex: 1)
+router.get("/:id", async (req, res) => {
+    try {
+        const restaurantId = Number(req.params.id);
 
-    if (!restaurant) {
-        return res.status(404).json({ error: 'Restaurant not found' });
+        const restaurant = await Restaurant.findOne({ id: restaurantId }).lean();
+        if (!restaurant) {
+            return res.status(404).json({ error: "Restaurant not found" });
+        }
+
+        res.json(restaurant);
+    } catch (err) {
+        console.error("[RESTAURANT-SERVICE] GET /restaurants/:id error:", err.message);
+        res.status(500).json({ error: "Internal server error" });
     }
-
-    res.json(restaurant);
 });
 
 router.get('/:id/menu', (req, res) => {

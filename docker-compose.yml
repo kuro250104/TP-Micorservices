@@ -15,29 +15,54 @@ services:
     networks:
       - backend
 
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - backend
+
   users:
     build: ./users
     container_name: users
     ports:
-      - "5000:5000"
+      - "6000:5000"
     networks:
       - backend
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb+srv://gaetanbougoula_db_user:lTyOxwCuJyCb0tlP@microservice.zy1ubjq.mongodb.net/microservice?retryWrites=true&w=majority
 
   restaurants:
     build: ./restaurant
     container_name: restaurants
     ports:
-      - "5001:5001"
+      - "6001:5001"
     networks:
       - backend
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb+srv://gaetanbougoula_db_user:lTyOxwCuJyCb0tlP@microservice.zy1ubjq.mongodb.net/microservice?retryWrites=true&w=majority
 
   orders:
     build: ./order-services
     container_name: orders
     ports:
-      - "5002:5002"
+      - "6002:5002"
     networks:
       - backend
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb+srv://gaetanbougoula_db_user:lTyOxwCuJyCb0tlP@microservice.zy1ubjq.mongodb.net/microservice?retryWrites=true&w=majority
+
+volumes:
+  mongo-data:
 
 networks:
   backend:

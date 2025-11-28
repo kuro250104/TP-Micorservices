@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cd api-gateway && docker-compose up && cd ../user-service && docker-compose up",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Clemios/ynov-fullstack-demo/issues"
   },
-  "homepage": "https://github.com/Clemios/ynov-fullstack-demo#readme"
+  "homepage": "https://github.com/Clemios/ynov-fullstack-demo#readme",
+  "dependencies": {
+    "mongodb": "^6.21.0"
+  }
 }
